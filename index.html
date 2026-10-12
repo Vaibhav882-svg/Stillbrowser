@@ -1,0 +1,81 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="theme-color" content="#090d16">
+  <meta name="description" content="Still Browser — a spatial, minimal browser concept.">
+  <link rel="icon" type="image/svg+xml" href="/favicon.svg">
+  <title>Still — Spatial Browser</title>
+  <link rel="stylesheet" href="/src/style.css">
+</head>
+<body>
+  <div class="ambient ambient-a"></div><div class="ambient ambient-b"></div>
+  <main class="stage">
+    <header class="topbar glass">
+      <a id="brandHome" class="brand" href="#" aria-label="Still home"><span class="brand-orb">s</span><span>still<span class="brand-light">space</span></span></a>
+      <div class="top-caption"><span class="live-dot"></span><span>SPATIAL BROWSING</span></div>
+      <button id="settingsBtn" class="round-btn" aria-label="Settings" title="Settings">⌘</button>
+    </header>
+
+    <section class="hero">
+      <div class="eyebrow"><span class="eyebrow-line"></span> YOUR SPACE, YOUR WEB</div>
+      <h1>A little more<br><span>room to think.</span></h1>
+      <p class="hero-copy">A quiet place for the internet. Open a destination, keep your essentials close, and let the interface stay out of your way.</p>
+    </section>
+
+    <section class="browser-shell glass">
+      <div class="window-top">
+        <div class="window-dots"><i></i><i></i><i></i></div>
+        <span class="window-label">NAVIGATION DECK</span>
+        <span class="window-status"><span class="live-dot"></span> READY</span>
+      </div>
+      <div class="nav-row">
+        <button id="back" class="nav-icon" title="Back" aria-label="Back" disabled>←</button>
+        <button id="forward" class="nav-icon" title="Forward" aria-label="Forward" disabled>→</button>
+        <button id="reload" class="nav-icon" title="Reload" aria-label="Reload">↻</button>
+        <form id="navForm" class="address">
+          <span class="address-symbol">⌁</span>
+          <input id="address" autocomplete="url" autocapitalize="none" spellcheck="false" placeholder="Search or enter a destination" aria-label="Search or enter a destination">
+          <button type="submit" aria-label="Go">↗</button>
+        </form>
+      </div>
+      <div class="deck-foot"><span>01 / DESTINATION</span><span>HTTP · HTTPS</span></div>
+    </section>
+
+    <section class="content-grid">
+      <div class="section-heading"><div><div class="eyebrow small">PINNED IN YOUR SPACE</div><h2>Launch pads</h2></div><span class="count">03 DESTINATIONS</span></div>
+      <div class="launch-grid">
+        <button class="launch-card card-wiki" data-url="https://www.wikipedia.org/">
+          <span class="card-orbit orbit-one"></span><span class="card-orbit orbit-two"></span>
+          <span class="launch-icon"><img src="https://www.wikipedia.org/static/favicon/wikipedia.ico" alt="" loading="lazy"><span class="launch-fallback">W</span></span><span class="launch-name">Wikipedia</span><span class="launch-desc">A universe of knowledge</span><span class="launch-arrow">↗</span>
+        </button>
+        <button class="launch-card card-mozilla" data-url="https://www.mozilla.org/">
+          <span class="card-orbit orbit-one"></span><span class="card-orbit orbit-two"></span>
+          <span class="launch-icon"><img src="https://www.mozilla.org/media/img/favicons/mozilla/favicon.ico" alt="" loading="lazy"><span class="launch-fallback">M</span></span><span class="launch-name">Mozilla</span><span class="launch-desc">The open web</span><span class="launch-arrow">↗</span>
+        </button>
+        <button class="launch-card card-example" data-url="https://example.com/">
+          <span class="card-orbit orbit-one"></span><span class="card-orbit orbit-two"></span>
+          <span class="launch-icon"><img src="https://example.com/favicon.ico" alt="" loading="lazy"><span class="launch-fallback">E</span></span><span class="launch-name">Example</span><span class="launch-desc">A simple starting point</span><span class="launch-arrow">↗</span>
+        </button>
+      </div>
+    </section>
+
+    <section class="bottom-row">
+      <div class="note-card glass"><span class="note-icon">✦</span><div><strong>Designed to feel lighter.</strong><p>Layered surfaces. Quiet motion. Clear focus.</p></div></div>
+      <div class="privacy-chip"><span class="live-dot"></span> NO ACCOUNT REQUIRED</div>
+    </section>
+    <footer><span>STILLSPACE · CONCEPT BUILD</span><span>RUST + TAURI · ANDROID WEBVIEW INTEGRATION PENDING</span></footer>
+  </main>
+  <div class="toast" id="toast" role="status"></div>
+  <dialog id="settingsDialog" class="settings glass">
+    <form method="dialog"><button class="close" aria-label="Close settings">×</button></form>
+    <div class="eyebrow small">PREFERENCES</div><h2>Your space.</h2>
+    <p>This concept uses a dark spatial interface with floating glass surfaces and soft depth.</p>
+    <div class="setting-row"><span>Motion effects</span><span class="setting-value">Subtle</span></div>
+    <div class="setting-row"><span>Interface theme</span><span class="setting-value">Midnight</span></div>
+    <div class="setting-row"><span>Navigation</span><span class="setting-value">HTTP / HTTPS</span></div>
+  </dialog>
+  <script type="module" src="/src/main.js"></script>
+</body>
+</html>

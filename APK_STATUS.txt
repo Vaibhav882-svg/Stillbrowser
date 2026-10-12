@@ -1,0 +1,3 @@
+NO APK INCLUDED.
+
+Static QA completed on 2026-10-12: JavaScript syntax, JSON/TOML parsing, HTML ID references, and configured icon asset paths passed. The npm dependency installation timed out, so a Vite production build was not completed. Android SDK/NDK and Rust/Cargo are unavailable in this review environment. Native Tauri Android plugin compilation and physical-device behavior remain unverified. See QA_REPORT.md before attempting a cloud build.
