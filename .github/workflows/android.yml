@@ -8,27 +8,105 @@ on:
       - "StillBrowser_Spatial_WebView_QA.zip"
       - ".github/workflows/android.yml"
 
+permissions:
+  contents: read
+
 jobs:
   build:
     runs-on: ubuntu-22.04
+    timeout-minutes: 45
 
     steps:
       - name: Checkout repository
         uses: actions/checkout@v4
 
-      - name: Find and extract project ZIP
-        run: |
-          ZIP_FILE="$(find . -maxdepth 1 -type f -iname '*.zip' | head -n 1)"
-          if [ -z "$ZIP_FILE" ]; then
-            echo "No ZIP file found in repository root"
-            exit 1
-          fi
-          mkdir extracted
-          unzip -q "$ZIP_FILE" -d extracted
-          echo "Extracted files:"
-          find extracted -maxdepth 4 -type f | head -200
+      - name: Install Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: "22"
+          cache: ""
 
-      - name: Check project structure
+      - name: Install Java
+        uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: "17"
+
+      - name: Install Android SDK
+        uses: android-actions/setup-android@v3
+
+      - name: Install Android SDK components
         run: |
-          find extracted -name package.json -o -name tauri.conf.json -o -name Cargo.toml
-          echo "Extraction complete. Review the log to locate the app root."
+          sdkmanager "platform-tools" \
+            "platforms;android-35" \
+            "build-tools;35.0.0" \
+            "ndk;27.2.12479018"
+
+      - name: Configure Android environment
+        run: |
+          echo "ANDROID_HOME=$ANDROID_HOME" >> "$GITHUB_ENV"
+          echo "ANDROID_SDK_ROOT=$ANDROID_HOME" >> "$GITHUB_ENV"
+          echo "NDK_HOME=$ANDROID_HOME/ndk/27.2.12479018" >> "$GITHUB_ENV"
+
+      - name: Install Linux dependencies
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y \
+            build-essential curl wget file \
+            libwebkit2gtk-4.1-dev \
+            libayatana-appindicator3-dev \
+            librsvg2-dev patchelf \
+            unzip pkg-config
+
+      - name: Install Rust
+        uses: dtolnay/rust-toolchain@stable
+        with:
+          targets: aarch64-linux-android,armv7-linux-androideabi,i686-linux-android,x86_64-linux-android
+
+      - name: Extract project ZIP
+        run: |
+          ZIP_FILE="StillBrowser_Spatial_WebView_QA.zip"
+          test -f "$ZIP_FILE" || {
+            echo "Project ZIP not found: $ZIP_FILE"
+            exit 1
+          }
+          mkdir -p extracted
+          unzip -q "$ZIP_FILE" -d extracted
+          test -f extracted/RustTauriBrowser/package.json
+          test -f extracted/RustTauriBrowser/src-tauri/tauri.conf.json
+          echo "Project structure verified."
+
+      - name: Install JavaScript dependencies
+        working-directory: extracted/RustTauriBrowser
+        run: npm install
+
+      - name: Install Tauri CLI
+        run: cargo install tauri-cli --version "^2" --locked
+
+      - name: Initialize Android project
+        working-directory: extracted/RustTauriBrowser
+        run: npm run tauri -- android init
+
+      - name: Build frontend
+        working-directory: extracted/RustTauriBrowser
+        run: npm run build
+
+      - name: Build Android APK
+        working-directory: extracted/RustTauriBrowser
+        run: npm run tauri -- android build --apk
+
+      - name: Locate generated APK
+        if: success()
+        run: |
+          find extracted/RustTauriBrowser/src-tauri/gen/android \
+            -type f -name '*.apk' -print
+
+      - name: Upload APK artifact
+        if: success()
+        uses: actions/upload-artifact@v4
+        with:
+          name: StillBrowser-Android-APK
+          path: extracted/RustTauriBrowser/src-tauri/gen/android/app/build/outputs/apk/**/*.apk
+          if-no-files-found: error
+          retention-days: 7
+          
