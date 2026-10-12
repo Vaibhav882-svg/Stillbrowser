@@ -1,3 +1,7 @@
+const COMMANDS: &[&str] = &["open", "home", "back", "forward", "reload"];
+
 fn main() {
-    tauri_build::build()
+    tauri_plugin::Builder::new(COMMANDS)
+        .android_path("android")
+        .build();
 }

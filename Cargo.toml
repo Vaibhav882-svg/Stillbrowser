@@ -1,20 +1,14 @@
 [package]
-name = "still-browser"
+name = "tauri-plugin-browser"
 version = "0.1.0"
-description = "Minimal Rust and Tauri browser shell"
+description = "Native Android WebView browser overlay for Still Browser"
 authors = ["Still Browser"]
 edition = "2021"
-
-[lib]
-name = "still_browser_lib"
-crate-type = ["staticlib", "cdylib", "rlib"]
-
-[build-dependencies]
-tauri-build = { version = "2", features = [] }
+links = "tauri-plugin-browser"
 
 [dependencies]
-tauri = { version = "2", features = [] }
-tauri-plugin-opener = "2"
-url = "2"
+tauri = { version = "2" }
+serde = { version = "1", features = ["derive"] }
 
-tauri-plugin-browser = { path = "plugins/tauri-plugin-browser" }
+[build-dependencies]
+tauri-plugin = { version = "2", features = ["build"] }
