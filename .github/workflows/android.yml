@@ -16,9 +16,6 @@ jobs:
     runs-on: ubuntu-22.04
     timeout-minutes: 60
 
-    env:
-      ANDROID_HOME: /usr/local/lib/android/sdk
-
     steps:
       - name: Checkout repository
         uses: actions/checkout@v4
@@ -34,26 +31,20 @@ jobs:
           distribution: temurin
           java-version: "17"
 
-      - name: Accept licenses and install Android SDK
-        shell: bash
+      - name: Setup Android SDK
+        uses: android-actions/setup-android@v3
+        with:
+          cmdline-tools-version: "12266719"
+          accept-android-sdk-licenses: true
+          packages: |
+            platform-tools
+            platforms;android-35
+            build-tools;35.0.0
+            ndk;27.2.12479018
+
+      - name: Configure Android environment
         run: |
           echo "ANDROID_HOME=$ANDROID_HOME" >> "$GITHUB_ENV"
-          SDKMANAGER="$(find "$ANDROID_HOME" -type f -name sdkmanager | head -n 1)"
-
-          if [ -z "$SDKMANAGER" ]; then
-            echo "sdkmanager not found in $ANDROID_HOME"
-            exit 1
-          fi
-
-          echo "Using: $SDKMANAGER"
-          yes | "$SDKMANAGER" --licenses || true
-
-          yes | "$SDKMANAGER" --install \
-            "platform-tools" \
-            "platforms;android-35" \
-            "build-tools;35.0.0" \
-            "ndk;27.2.12479018"
-
           echo "ANDROID_SDK_ROOT=$ANDROID_HOME" >> "$GITHUB_ENV"
           echo "NDK_HOME=$ANDROID_HOME/ndk/27.2.12479018" >> "$GITHUB_ENV"
 
@@ -78,8 +69,8 @@ jobs:
           mkdir -p extracted
           unzip -q StillBrowser_Spatial_WebView_QA.zip -d extracted
 
-          echo "Project files:"
-          find extracted -maxdepth 4 \
+          echo "Project configuration files:"
+          find extracted -maxdepth 5 -type f \
             \( -name package.json -o -name tauri.conf.json -o -name Cargo.toml \) \
             -print
 
@@ -105,7 +96,7 @@ jobs:
         working-directory: extracted/RustTauriBrowser
         run: npm run tauri -- android build --apk
 
-      - name: Upload APK
+      - name: Upload APK artifact
         if: success()
         uses: actions/upload-artifact@v4
         with:
