@@ -1,0 +1,34 @@
+
+name: Build Still Browser APK
+
+on:
+  workflow_dispatch:
+  push:
+    paths:
+      - "StillBrowser_Spatial_WebView_QA.zip"
+      - ".github/workflows/android.yml"
+
+jobs:
+  build:
+    runs-on: ubuntu-22.04
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Find and extract project ZIP
+        run: |
+          ZIP_FILE="$(find . -maxdepth 1 -type f -iname '*.zip' | head -n 1)"
+          if [ -z "$ZIP_FILE" ]; then
+            echo "No ZIP file found in repository root"
+            exit 1
+          fi
+          mkdir extracted
+          unzip -q "$ZIP_FILE" -d extracted
+          echo "Extracted files:"
+          find extracted -maxdepth 4 -type f | head -200
+
+      - name: Check project structure
+        run: |
+          find extracted -name package.json -o -name tauri.conf.json -o -name Cargo.toml
+          echo "Extraction complete. Review the log to locate the app root."
